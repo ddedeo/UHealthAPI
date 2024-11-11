@@ -1,66 +1,56 @@
 <?php
 
-namespace App\Http\Controllers;
 
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
 use App\Models\Patient;
-use App\Http\Requests\StorePatientRequest;
-use App\Http\Requests\UpdatePatientRequest;
+use Illuminate\Http\Request;
 
 class PatientController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return Patient::all();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'firstname' => 'required|string|max:45',
+            'lastname' => 'required|string|max:45',
+            'date_of_birth' => 'required|date',
+            'place_of_birth' => 'required|string|max:45',
+            'height' => 'nullable|numeric',
+            'medical_note' => 'nullable|string',
+        ]);
+
+        return Patient::create($validated);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorePatientRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(Patient $patient)
     {
-        //
+        return $patient;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Patient $patient)
+    public function update(Request $request, Patient $patient)
     {
-        //
+        $validated = $request->validate([
+            'firstname' => 'string|max:45',
+            'lastname' => 'string|max:45',
+            'date_of_birth' => 'date',
+            'place_of_birth' => 'string|max:45',
+            'height' => 'nullable|numeric',
+            'medical_note' => 'nullable|string',
+        ]);
+
+        $patient->update($validated);
+        return $patient;
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdatePatientRequest $request, Patient $patient)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Patient $patient)
     {
-        //
+        $patient->delete();
+        return response()->noContent();
     }
 }
